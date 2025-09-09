@@ -11,7 +11,7 @@ export class WhiteboardService {
 
   startConnection(boardId: string) {
     this.hubConnection = new signalR.HubConnectionBuilder()
-      .withUrl(`/whiteboardHub`) 
+      .withUrl(`/whiteboardHub`) // Use relative URL for Render or localhost
       .withAutomaticReconnect()
       .build();
 
@@ -31,6 +31,7 @@ export class WhiteboardService {
       })
       .catch(err => console.error('SignalR connection error:', err));
 
+    
     this.hubConnection.on('ReceiveDrawing', (data) => {
       this.draw$.next(data);
     });
@@ -41,7 +42,7 @@ export class WhiteboardService {
       this.hubConnection.invoke('SendDrawing', boardId, data)
         .catch(err => console.error('SendDrawing error:', err));
     } else {
-      
+     
       this.pendingDrawings.push(data);
     }
   }

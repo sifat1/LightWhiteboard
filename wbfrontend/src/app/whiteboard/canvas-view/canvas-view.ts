@@ -12,13 +12,13 @@ export class CanvasView {
   private ctx!: CanvasRenderingContext2D;
   private drawing = false;
 
-  boardId = "global-board";
+  boardId = 'global-board';
   selectedTool: 'pen' | 'eraser' = 'pen';
   penColor = '#000000';
   eraserSize = 20;
 
-  private lastEmit = 0;
-  private emitInterval = 16; // ~60fps
+  private lastX = 0;
+  private lastY = 0;
 
   constructor(private whiteboardService: WhiteboardService, private route: ActivatedRoute) {
     this.boardId = this.route.snapshot.paramMap.get('id') || 'global-board';
@@ -31,12 +31,12 @@ export class CanvasView {
     canvas.width = window.innerWidth - 50;
     canvas.height = window.innerHeight - 150;
 
-    
+    // Start SignalR connection and join the board
     this.whiteboardService.startConnection(this.boardId);
 
-  
+    // Subscribe to remote drawings
     this.whiteboardService.draw$.subscribe((data) => {
-      this.drawOnCanvas(data.x, data.y, data.color, data.tool, false);
+      this.drawRemote(data);
     });
   }
 
@@ -50,7 +50,9 @@ export class CanvasView {
 
   startDrawing(event: MouseEvent) {
     this.drawing = true;
-    this.draw(event);
+    const rect = this.canvasRef.nativeElement.getBoundingClientRect();
+    this.lastX = event.clientX - rect.left;
+    this.lastY = event.clientY - rect.top;
   }
 
   stopDrawing() {
@@ -66,10 +68,10 @@ export class CanvasView {
     const x = event.clientX - rect.left;
     const y = event.clientY - rect.top;
 
-    this.drawOnCanvas(x, y, this.penColor, this.selectedTool, true);
+    this.drawLocal(x, y, this.penColor, this.selectedTool, true);
   }
 
-  drawOnCanvas(x: number, y: number, color: string, tool: 'pen' | 'eraser', emit: boolean) {
+  private drawLocal(x: number, y: number, color: string, tool: 'pen' | 'eraser', emit: boolean) {
     if (tool === 'eraser') {
       this.ctx.clearRect(x - this.eraserSize / 2, y - this.eraserSize / 2, this.eraserSize, this.eraserSize);
     } else {
@@ -77,18 +79,39 @@ export class CanvasView {
       this.ctx.lineCap = 'round';
       this.ctx.strokeStyle = color;
 
+      this.ctx.beginPath();
+      this.ctx.moveTo(this.lastX, this.lastY);
       this.ctx.lineTo(x, y);
       this.ctx.stroke();
-      this.ctx.beginPath();
-      this.ctx.moveTo(x, y);
     }
 
     if (emit) {
-      const now = Date.now();
-      if (now - this.lastEmit > this.emitInterval) {
-        this.whiteboardService.sendDrawing(this.boardId, { x, y, color, tool });
-        this.lastEmit = now;
-      }
+      this.whiteboardService.sendDrawing(this.boardId, {
+        x,
+        y,
+        prevX: this.lastX,
+        prevY: this.lastY,
+        color,
+        tool
+      });
+    }
+
+    // Update last position
+    this.lastX = x;
+    this.lastY = y;
+  }
+
+  private drawRemote(data: any) {
+    if (data.tool === 'eraser') {
+      this.ctx.clearRect(data.x - this.eraserSize / 2, data.y - this.eraserSize / 2, this.eraserSize, this.eraserSize);
+    } else {
+      this.ctx.beginPath();
+      this.ctx.moveTo(data.prevX, data.prevY);
+      this.ctx.lineTo(data.x, data.y);
+      this.ctx.strokeStyle = data.color;
+      this.ctx.lineWidth = 2;
+      this.ctx.lineCap = 'round';
+      this.ctx.stroke();
     }
   }
 
