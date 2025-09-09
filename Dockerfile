@@ -1,10 +1,19 @@
 # Stage 1: Build Angular app
 FROM node:20-alpine AS frontend-build
 WORKDIR /frontend
+
+# Copy package files first (better caching)
 COPY wbfrontend/package*.json ./
-RUN npm install -g @angular/cli && npm install
+
+# Install ALL dependencies (including devDependencies)
+RUN npm install
+
+# Copy rest of Angular source code
 COPY wbfrontend/ .
-RUN ng build --configuration production
+
+# Build Angular SPA
+RUN npx ng build --configuration production
+
 
 # Stage 2: Build .NET Web API
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS backend-build
