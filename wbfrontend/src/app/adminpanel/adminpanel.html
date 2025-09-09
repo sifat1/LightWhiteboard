@@ -1,0 +1,26 @@
+<div class="container">
+    <div class="action-container">
+        <button class="submit" (click)="blockUsers()">Block</button>
+        <button class="unblock" (click)="unblockUsers()">UnBlock</button>
+        <button class="delete" (click)="deleteUsers()">Delete</button>
+    </div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th></th>
+                <th>User Name</th>
+                <th>Email</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let user of users">
+                <td><input type="checkbox" [id]="user.id" (change)="onCheckboxChange($event)" 
+                    [checked]="checked.includes(user.id)"/></td>
+                <td>{{ user.username }}</td>
+                <td>{{ user.email }}</td>
+                <td>{{ user.status ? 'active' : 'blocked' }}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>

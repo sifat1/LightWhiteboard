@@ -1,0 +1,28 @@
+
+<div class="card">
+    <form (ngSubmit)="handleSubmit()" [formGroup]=registrationform>
+        <div class="inputcontainer">
+            <label class="label" for="username">User Name</label>
+            <input class="input" type="text" formControlName="username">
+        </div>
+        <div class="inputcontainer">
+            <label for="email">Email</label>
+            <input class="input" type="text" formControlName="email">
+        </div>
+        <div class="inputcontainer">
+            <label class="label" for="password">Password</label>
+            <input class="input" type="text" formControlName="password">
+        </div>
+        <div class="inputcontainer">
+            <label class="label" for="conpassword">Confirm Password</label>
+            <input class="input" type="text" formControlName="conpassword">
+        </div>
+        <div class="inputcontainer">
+            <label class="label" for="photo">Profile Photo</label>
+            <input class="input" type="file" formControlName="photo">
+        </div>
+        <div>
+            <button class = "submit" type="submit">Register</button>
+        </div>
+    </form>
+</div>

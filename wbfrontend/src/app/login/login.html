@@ -1,0 +1,10 @@
+<div class="login-container">
+    <div class="form-group" [formGroup]="loginForm">
+        <input type="text" placeholder="Username" class="log" formControlName="username">
+        <label for="username" *ngIf="loginForm.get('username')?.valid">User Name is Not Valid</label>
+        <input type="password" placeholder="Password" class="log" formControlName="password">
+        <label for="password" *ngIf="loginForm.get('password')?.valid">Password is Not Valid</label>
+        <button (click)="onSubmit()" class="submit">Login</button>
+    </div>
+
+</div>

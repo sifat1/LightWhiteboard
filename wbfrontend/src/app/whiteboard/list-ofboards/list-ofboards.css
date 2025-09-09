@@ -1,0 +1,29 @@
+.list-of-boards {
+  padding: 20px;
+  
+}
+a{
+  text-decoration: none;
+  color: inherit;
+}
+
+.board-item {
+  border: 1px solid #ccc;
+  padding: 10px;
+  margin-bottom: 10px;
+  margin-top: 5px;
+}
+.board-item:hover {
+  background-color: #f9f9f9;
+}
+.create-board-button {
+  margin-top: 20px;
+  padding: 10px 15px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+.create-board-button:hover {
+  background-color: #0056b3;
+}

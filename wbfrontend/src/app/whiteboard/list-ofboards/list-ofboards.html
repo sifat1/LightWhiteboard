@@ -1,0 +1,16 @@
+<div class="list-of-boards">
+    <button
+        class="create-board-button"
+        (click)="createNewBoard()"
+    >
+        Create New Board
+    </button>
+
+  <a class="board-card" *ngFor="let board of boards" [routerLink]="['/cnv', board.id]">
+    <div class="board-item">
+        <h3>{{ board.name }}</h3>
+        <p>Created on: {{ board.createdAt | date:'medium' }}</p>
+    </div>
+  </a>
+
+</div>

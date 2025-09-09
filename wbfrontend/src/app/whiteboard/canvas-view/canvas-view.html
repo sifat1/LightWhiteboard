@@ -1,0 +1,12 @@
+<div class="toolbar">
+  <button (click)="selectTool('pen')" [class.active]="selectedTool === 'pen'">🖊 Pen</button>
+  <button (click)="selectTool('eraser')" [class.active]="selectedTool === 'eraser'">🧽 Eraser</button>
+  <input type="color" [value]="penColor" (change)="onSelectColor($event)" title="Choose Pen Color"/>
+</div>
+
+<canvas #canvas
+  (mousedown)="startDrawing($event)"
+  (mouseup)="stopDrawing()"
+  (mouseleave)="stopDrawing()"
+  (mousemove)="draw($event)">
+</canvas>

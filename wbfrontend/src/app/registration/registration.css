@@ -1,0 +1,45 @@
+.input {
+    margin-top: 5px;
+    padding: 7px;
+    border: 1px solid rgb(160, 161, 161);
+    border-radius: 5px; /* Changed from 30% to px for better consistency */
+}
+
+.input:invalid {
+    border: 1px solid red;
+}
+
+.card {
+    width: 300px;
+    border: 1px solid rgb(148, 150, 150);
+    border-radius: 10px; 
+    box-shadow: -5px 5px 3px rgba(184, 185, 185, 0.4); 
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 20px; 
+    background-color: rgb(243, 243, 243);
+}
+
+.inputcontainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: left;
+    padding: 5px;
+}
+
+.submit{
+    margin-top: 10px;
+    padding: 10px;
+    border-radius: 10px;
+    background-color: rgb(0, 110, 255);
+    color: white;
+    font-weight: bold;
+    border: none;
+}
+
+.submit:hover{
+    background-color: rgb(0, 80, 185);
+    cursor: pointer;
+}
