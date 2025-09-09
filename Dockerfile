@@ -1,4 +1,4 @@
-# Stage 1: Build Angular App
+# Stage 1: Build Angular app
 FROM node:20-alpine AS frontend-build
 WORKDIR /frontend
 COPY wbfrontend/package*.json ./
@@ -15,20 +15,17 @@ RUN dotnet restore
 COPY WhiteboardAPI/ .
 RUN dotnet publish -c Release -o /app/publish
 
-# Stage 3: Final Container (Angular + .NET API)
+# Stage 3: Final Image - Serve Angular + .NET from One Container
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /app
 
-# Copy backend build
+# Copy .NET backend build output
 COPY --from=backend-build /app/publish .
 
-# Copy Angular frontend build to wwwroot
+# Copy Angular build into ASP.NET wwwroot
 COPY --from=frontend-build /frontend/dist/wbfrontend ./wwwroot
 
-# Set environment variables for Render
-ENV ASPNETCORE_URLS=http://+:5000
-
-# Expose port
 EXPOSE 5000
+ENV ASPNETCORE_URLS=http://+:5000
 
 ENTRYPOINT ["dotnet", "WhiteboardAPI.dll"]
