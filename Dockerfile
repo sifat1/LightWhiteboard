@@ -4,7 +4,8 @@ WORKDIR /frontend
 COPY wbfrontend/package*.json ./
 RUN npm install
 COPY wbfrontend/ .
-RUN npm run build --configuration production
+# Add the project name "demoadmin" to the build command
+RUN ng build demoadmin --configuration production
 
 # Stage 2: Build .NET Web API
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS backend-build
