@@ -59,6 +59,15 @@
   display: inline-block;
 }
 
+.themechange{
+  background-color: black;
+  color: #fff;
+  border: 1px solid #fff;
+  border-radius: 5px;
+  padding: 5px;
+  margin: 5px;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .navbar-links {
