@@ -11,7 +11,7 @@ export class WhiteboardService {
 
   startConnection(boardId: string) {
     this.hubConnection = new signalR.HubConnectionBuilder()
-      .withUrl(`/whiteboardHub?boardId=${boardId}`)
+      .withUrl(`/whiteboardHub`) 
       .withAutomaticReconnect()
       .build();
 
@@ -20,6 +20,10 @@ export class WhiteboardService {
       .then(() => {
         console.log('SignalR connected');
         this.connected = true;
+
+        
+        this.hubConnection.invoke('JoinBoard', boardId)
+          .catch(err => console.error('JoinBoard error:', err));
 
         
         this.pendingDrawings.forEach(d => this.sendDrawing(boardId, d));
@@ -37,7 +41,15 @@ export class WhiteboardService {
       this.hubConnection.invoke('SendDrawing', boardId, data)
         .catch(err => console.error('SendDrawing error:', err));
     } else {
+      
       this.pendingDrawings.push(data);
+    }
+  }
+
+  leaveBoard(boardId: string) {
+    if (this.connected) {
+      this.hubConnection.invoke('LeaveBoard', boardId)
+        .catch(err => console.error('LeaveBoard error:', err));
     }
   }
 }

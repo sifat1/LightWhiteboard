@@ -18,7 +18,7 @@ export class CanvasView {
   eraserSize = 20;
 
   private lastEmit = 0;
-  private emitInterval = 16; 
+  private emitInterval = 16; // ~60fps
 
   constructor(private whiteboardService: WhiteboardService, private route: ActivatedRoute) {
     this.boardId = this.route.snapshot.paramMap.get('id') || 'global-board';
@@ -31,10 +31,10 @@ export class CanvasView {
     canvas.width = window.innerWidth - 50;
     canvas.height = window.innerHeight - 150;
 
-    // Start SignalR connection
+    
     this.whiteboardService.startConnection(this.boardId);
 
-    // Subscribe to incoming drawings
+  
     this.whiteboardService.draw$.subscribe((data) => {
       this.drawOnCanvas(data.x, data.y, data.color, data.tool, false);
     });
@@ -90,5 +90,9 @@ export class CanvasView {
         this.lastEmit = now;
       }
     }
+  }
+
+  ngOnDestroy() {
+    this.whiteboardService.leaveBoard(this.boardId);
   }
 }
