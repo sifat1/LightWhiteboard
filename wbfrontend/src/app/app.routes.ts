@@ -9,6 +9,6 @@ export const routes: Routes = [
     {path:'register', component: Registration},
     {path:'login', component: Login},
     {path: 'adminpanel', component: Adminpanel},
-    {path: 'cnv/:id', component: CanvasView},
+    {path: 'cnv/:id', component: CanvasView, data: { prerender: false }},
     {path: '',component: IndexPage}
 ];
