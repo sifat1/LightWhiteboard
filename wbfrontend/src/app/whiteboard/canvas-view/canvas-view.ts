@@ -2,12 +2,10 @@ import { Component, ElementRef, ViewChild } from '@angular/core';
 import { WhiteboardService } from '../../services/whiteboard-service';
 import { ActivatedRoute } from '@angular/router';
 
-
 @Component({
   selector: 'app-canvas-view',
-  imports: [],
   templateUrl: './canvas-view.html',
-  styleUrl: './canvas-view.css'
+  styleUrls: ['./canvas-view.css']
 })
 export class CanvasView {
   @ViewChild('canvas', { static: true }) canvasRef!: ElementRef<HTMLCanvasElement>;
@@ -19,12 +17,11 @@ export class CanvasView {
   penColor = '#000000';
   eraserSize = 20;
 
-  constructor(private whiteboardService: WhiteboardService, private route : ActivatedRoute) {
+  private lastEmit = 0;
+  private emitInterval = 16; 
+
+  constructor(private whiteboardService: WhiteboardService, private route: ActivatedRoute) {
     this.boardId = this.route.snapshot.paramMap.get('id') || 'global-board';
-  }
-  
-  onSelectColor(event: any) {
-    this.penColor = event.target.value;
   }
 
   ngOnInit(): void {
@@ -34,12 +31,17 @@ export class CanvasView {
     canvas.width = window.innerWidth - 50;
     canvas.height = window.innerHeight - 150;
 
-    
+    // Start SignalR connection
     this.whiteboardService.startConnection(this.boardId);
 
+    // Subscribe to incoming drawings
     this.whiteboardService.draw$.subscribe((data) => {
       this.drawOnCanvas(data.x, data.y, data.color, data.tool, false);
     });
+  }
+
+  onSelectColor(event: any) {
+    this.penColor = event.target.value;
   }
 
   selectTool(tool: 'pen' | 'eraser') {
@@ -80,9 +82,13 @@ export class CanvasView {
       this.ctx.beginPath();
       this.ctx.moveTo(x, y);
     }
+
     if (emit) {
-      this.whiteboardService.sendDrawing(this.boardId, { x, y, color, tool });
+      const now = Date.now();
+      if (now - this.lastEmit > this.emitInterval) {
+        this.whiteboardService.sendDrawing(this.boardId, { x, y, color, tool });
+        this.lastEmit = now;
+      }
     }
   }
-
 }
