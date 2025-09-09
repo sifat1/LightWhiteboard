@@ -6,8 +6,6 @@ import { Injectable } from '@angular/core';
 export class SetTheme {
   ifdarktheme: boolean = false;
 
-  constructor() { }
-
   toggleTheme() {
     this.ifdarktheme = !this.ifdarktheme;
     if (this.ifdarktheme) {

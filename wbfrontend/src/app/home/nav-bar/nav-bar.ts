@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { CommonModule} from '@angular/common';
+import { SetTheme } from '../../services/set-theme';
 
 @Component({
   selector: 'app-nav-bar',
@@ -11,4 +12,15 @@ import { CommonModule} from '@angular/common';
 })
 export class NavBar {
   islogged: boolean = false;
+  isDark: boolean = false;
+  theme : SetTheme;
+  constructor(private chtheme : SetTheme){
+    this.theme = chtheme;
+  }
+
+  ontogolet()
+  {
+    this.theme.toggleTheme();
+    this.isDark = this.theme.isDarkTheme();
+  }
 }
