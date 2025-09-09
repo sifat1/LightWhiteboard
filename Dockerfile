@@ -1,40 +1,48 @@
-# Stage 1: Build Angular app
+# ============================
+# STAGE 1 — Build Angular App
+# ============================
 FROM node:20-alpine AS frontend-build
 WORKDIR /frontend
 
-# Copy package files first (better caching)
+# Copy and install dependencies
 COPY wbfrontend/package*.json ./
+RUN npm install -g @angular/cli && npm install
 
-# Install ALL dependencies (including devDependencies)
-RUN npm install
-
-# Copy rest of Angular source code
+# Copy all Angular source code
 COPY wbfrontend/ .
 
-# Build Angular SPA
-RUN npx ng build --configuration production
+# Build Angular in production mode
+RUN ng build --configuration production
 
-
-# Stage 2: Build .NET Web API
+# ============================
+# STAGE 2 — Build .NET Backend
+# ============================
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS backend-build
 WORKDIR /src
+
+# Copy .NET project file and restore
 COPY WhiteboardAPI/WhiteboardAPI.csproj ./WhiteboardAPI/
 WORKDIR /src/WhiteboardAPI
 RUN dotnet restore
+
+# Copy rest of backend code and publish
 COPY WhiteboardAPI/ .
 RUN dotnet publish -c Release -o /app/publish
 
-# Stage 3: Final Image - Serve Angular + .NET from One Container
+# ============================
+# STAGE 3 — Final Deployment Image
+# ============================
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /app
 
-# Copy .NET backend build output
+# Copy published backend files
 COPY --from=backend-build /app/publish .
 
-# Copy Angular build into ASP.NET wwwroot
-COPY --from=frontend-build /frontend/dist/wbfrontend ./wwwroot
+# Copy Angular frontend into wwwroot
+COPY --from=frontend-build /frontend/dist/demoadmin ./wwwroot
 
-EXPOSE 5000
-ENV ASPNETCORE_URLS=http://+:5000
+# Expose dynamic Render port
+ENV ASPNETCORE_URLS=http://+:${PORT}
 
+# Start the .NET API
 ENTRYPOINT ["dotnet", "WhiteboardAPI.dll"]
