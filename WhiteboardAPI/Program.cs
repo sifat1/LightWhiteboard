@@ -28,11 +28,11 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
-app.UseHttpsRedirection();
+app.UseStaticFiles();
+app.UseRouting();
 app.UseCors();
 app.UseAuthorization();
 app.MapControllers();
 app.MapHub<WhiteboardHub>("/whiteboardHub");
-
+app.MapFallbackToFile("index.html");
 app.Run();
