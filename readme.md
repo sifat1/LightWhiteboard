@@ -16,10 +16,12 @@ To run this project, you will need to have the following installed:
 
 Node.js and npm (for the Angular frontend)
 
-How to Use: 
+### How to Use: 
 
 1. Open the application in your browser.
 
 2. Create a new whiteboard or enter an existing whiteboard ID to join a session.
 
 3. Start drawing with the available tools.
+
+4. Demo Link [lightwhiteboard](https://lightwhiteboard.onrender.com/)
